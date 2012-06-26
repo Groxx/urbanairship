@@ -17,7 +17,7 @@ module Urbanairship
     attr_accessor :application_key, :application_secret, :master_secret, :logger, :request_timeout, :provider
 
     def register_device(device_token, options = {})
-      body = parse_register_options(options).to_json
+      body = JSON.generate(parse_register_options(options))
 
       if (options[:provider] || @provider) == :android
         do_request(:put, "/api/apids/#{device_token}", :body => body, :authenticate_with => :application_secret)
@@ -36,17 +36,17 @@ module Urbanairship
     end
 
     def push(options = {})
-      body = parse_push_options(options).to_json
+      body = JSON.generate(parse_push_options(options))
       do_request(:post, "/api/push/", :body => body, :authenticate_with => :master_secret)
     end
 
     def batch_push(notifications = [])
-      body = notifications.map{|notification| parse_push_options(notification)}.to_json
+      body = JSON.generate(notifications.map{|notification| parse_push_options(notification)})
       do_request(:post, "/api/push/batch/", :body => body, :authenticate_with => :master_secret)
     end
 
     def broadcast_push(options = {})
-      body = parse_push_options(options).to_json
+      body = JSON.generate(parse_push_options(options))
       do_request(:post, "/api/push/broadcast/", :body => body, :authenticate_with => :master_secret)
     end
 
